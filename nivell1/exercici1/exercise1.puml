@@ -1,0 +1,86 @@
+@startuml
+title "Cul d'Ampolla" Opticians - Customer and sales management
+
+hide methods
+skinparam classAttributeIconSize 0
+
+class Supplier {
+  supplier_id : Integer
+  name : String
+  street : String
+  street_number : String
+  floor : String
+  door : String
+  city : String
+  postcode : String
+  country : String
+  phone : String
+  fax : String
+  tax_id : String
+}
+
+class Brand {
+  brand_id : Integer
+  name : String
+}
+
+class Glasses {
+  glasses_id : Integer
+  frame_type : FrameType
+  frame_colour : String
+  lens_1_prescription : Decimal
+  lens_1_colour : String
+  lens_2_prescription : Decimal
+  lens_2_colour : String
+  price : Decimal
+}
+
+enum FrameType {
+  rimless
+  acetate
+  metal
+}
+
+class Customer {
+  customer_id : Integer
+  referrer_customer_id : Integer
+  name : String
+  postal_address : String
+  phone : String
+  email : String
+  registration_date : Date
+}
+
+class Employee {
+  employee_id : Integer
+  name : String
+}
+
+class Sale {
+  sale_id : Integer
+  sale_date : Date
+}
+
+class SaleLine {
+  sale_line_id : Integer
+  quantity : Integer
+  unit_price_eur : Decimal
+}
+
+Supplier "1" -- "0..*" Brand : supplies
+Brand "1" -- "0..*" Glasses : identifies
+
+Glasses ..> FrameType : frame_type
+Glasses "1" -- "0..*" SaleLine : glasses sold
+
+Customer "1" -- "0..*" Sale : makes
+
+Sale "1" *-- "1..*" SaleLine : contains
+Employee "1" -- "0..*" SaleLine : sells these glasses
+
+note right of Glasses
+  The lenses are identified as 1 and 2
+  without stating which is left or right.
+end note
+
+@enduml
