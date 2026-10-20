@@ -1,0 +1,113 @@
+@startuml
+title Small YouTube
+
+hide methods
+skinparam classAttributeIconSize 0
+
+class User {
+    user_id : Integer
+    email : String
+    password : String
+    username : String
+    birthdate : Date
+    gender : String
+    country : String
+    postalCode : String
+}
+
+class Video {
+    video_id: Integer
+    title : String
+    description : String
+    size : String
+    name : String
+    length : String
+    thumbnail : Blob
+    state : VideoState
+    played : Integer
+    likes : Integer
+    dislikes : Integer
+    published_by : Integer
+    created : Date
+}
+
+class Channel {
+    channel_id : Integer
+    name : String
+    description : String
+    created : Date
+}
+
+class Comment {
+    comment_id : Integer
+    user_id : Integer
+    text : String
+    date : datetime
+}
+
+class Subscription {
+    user_id : Integer
+    channel_id  : Integer
+}
+
+class Playlist {
+    playlist_id : Integer
+    user_id : Integer
+    name : String
+    creation_date : Date
+    state : PlaylistState
+}
+
+class VideoReaction {
+    type : ReactionType
+    date : datetime
+}
+
+class CommentReaction {
+    type : ReactionType
+    date : datetime
+}
+
+class Tag {
+    tag_id : Integer
+    name : String
+}
+
+enum PlaylistState {
+    PUBLIC
+    PRIVATE
+}
+
+enum VideoState {
+    PUBLIC
+    HIDDEN
+    PRIVATE
+}
+
+enum ReactionType {
+    LIKE
+    DISLIKE
+}
+
+User "1" -- "0..*" Video : publishes
+User "1" -- "0..1" Channel : creates
+User "1" -- "0..*" Comment : writes
+User "1" -- "0..*" Subscription
+User "1" -- "0..*" Playlist
+User "1" -- "0..*" VideoReaction : makes
+User "1" -- "0..*" CommentReaction : makes
+
+Comment "1" -- "0..*" CommentReaction : receives
+
+Video "1" -- "0..*" Comment : receives
+Video "1" -- "0..*" VideoReaction : receives
+Video "0..*" -- "0..*" Tag : receives
+
+Channel "1" -- "0..*" Subscription
+
+Playlist "0..*" -- "0..*" Video : contains
+
+VideoState "1" -- "1..1" Video : state
+
+PlaylistState "1" -- "1..1" Playlist
+@enduml
