@@ -1,0 +1,115 @@
+@startuml
+title Pizzeria - Online food ordering
+
+hide methods
+skinparam classAttributeIconSize 0
+
+class Province {
+  province_id : Integer
+  name : String
+}
+
+class Locality {
+  locality_id : Integer
+  name : String
+}
+
+class Customer {
+  customer_id : Integer
+  first_name : String
+  surname : String
+  address : String
+  postcode : String
+  phone : String
+}
+
+class Shop {
+  shop_id : Integer
+  address : String
+  postcode : String
+}
+
+class Employee {
+  employee_id : Integer
+  first_name : String
+  surname : String
+  tax_id : String
+  phone : String
+  role : EmployeeRole
+}
+
+enum EmployeeRole {
+  cook
+  delivery_driver
+}
+
+class CustomerOrder {
+  customer_order_id : Integer
+  customer_order_datetime : DateTime
+  customer_order_type : CustomerOrderType
+  total_price : Decimal
+  delivery_datetime : DateTime
+}
+
+enum CustomerOrderType {
+  home_delivery
+  shop_collection
+}
+
+class CustomerOrderLine {
+  customer_order_line_id : Integer
+  quantity : Integer
+}
+
+class Product {
+  product_id : Integer
+  product_type : ProductType
+  name : String
+  description : String
+  image : String
+  price : Decimal
+}
+
+enum ProductType {
+  pizza
+  burger
+  drink
+}
+
+class PizzaCategory {
+  pizza_category_id : Integer
+  name : String
+}
+
+Province "1" -- "0..*" Locality : contains
+Locality "1" -- "0..*" Customer : lives in
+Locality "1" -- "0..*" Shop : located in
+
+Customer "1" -- "0..*" CustomerOrder : places
+Shop "1" -- "0..*" CustomerOrder : manages
+Shop "1" -- "0..*" Employee : employs
+
+Employee ..> EmployeeRole : role
+Employee "0..1" -- "0..*" CustomerOrder : delivers
+
+CustomerOrder ..> CustomerOrderType : customer_order_type
+CustomerOrder "1" *-- "1..*" CustomerOrderLine : contains
+Product "1" -- "0..*" CustomerOrderLine : ordered
+
+Product ..> ProductType : product_type
+PizzaCategory "0..1" -- "0..*" Product : classifies
+
+note right of CustomerOrder
+  delivery_datetime and the delivery driver
+  are only recorded for home delivery orders.
+
+  The delivery driver must be an employee
+  whose role is delivery_driver.
+end note
+
+note right of PizzaCategory
+  Only pizzas belong to a category.
+  Each pizza belongs to exactly one category,
+end note
+
+@enduml
